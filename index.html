@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Rally Spectator Companion</title>
+  <style>
+    :root {
+      --bg: #121212;
+      --card-bg: #1e1e1e;
+      --accent: #ffb703;
+      --text: #ffffff;
+      --text-muted: #b0b0b0;
+      --danger: #ff4d4d;
+      --safe: #2ec4b6;
+      --border: #333333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      padding: 12px;
+      line-height: 1.4;
+      padding-bottom: 30px;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--accent);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 1.3rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+    }
+
+    /* SPONSOR BANNER */
+    .sponsor-card {
+      background: linear-gradient(135deg, #2a2a2a 0%, #1e1e1e 100%);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .sponsor-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .sponsor-name {
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: var(--accent);
+      text-transform: uppercase;
+    }
+
+    .free-entry-badge {
+      display: inline-block;
+      margin-top: 6px;
+      background-color: var(--safe);
+      color: #000;
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 4px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: bold;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+    }
+
+    .tab-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-size: 1.1rem;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .badge-time { background-color: var(--accent); color: #000; }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      background-color: var(--accent);
+      color: #000;
+      text-align: center;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 6px;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    /* LAST MILE ARROW INSTRUCTIONS */
+    .arrow-guide {
+      background-color: #181818;
+      border: 1px solid #333;
+      border-radius: 6px;
+      padding: 10px;
+      margin-top: 10px;
+    }
+
+    .arrow-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 0;
+      border-bottom: 1px solid #282828;
+    }
+
+    .arrow-step:last-child { border-bottom: none; }
+
+    .arrow-icon {
+      font-size: 1.2rem;
+      font-weight: bold;
+      background: var(--accent);
+      color: #000;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+
+    .arrow-text {
+      font-size: 0.85rem;
+      color: #ddd;
+    }
+
+    /* ENTRY LIST STYLING */
+    .entry-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 10px;
+      background: #252525;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .entry-item:active {
+      background-color: #333;
+    }
+
+    .car-num {
+      font-weight: bold;
+      color: var(--accent);
+      font-size: 1.1rem;
+      width: 40px;
+    }
+
+    .crew-details {
+      flex-grow: 1;
+      padding: 0 8px;
+    }
+
+    .crew-names { font-weight: bold; font-size: 0.9rem; }
+    .car-model { font-size: 0.75rem; color: var(--text-muted); }
+
+    .star-icon {
+      font-size: 1.6rem;
+      color: #555;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    .star-icon.starred {
+      color: var(--accent);
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      background: #282828;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Rally Companion</h1>
+    <span id="star-count" style="font-size: 0.8rem; color: var(--accent); font-weight: bold;">0 Starred</span>
+  </header>
+
+  <!-- PROMO SPONSOR BANNER -->
+  <div class="sponsor-card">
+    <div class="sponsor-title">Official Stage Sponsor</div>
+    <div class="sponsor-name">Apex Performance Engineering</div>
+    <div class="free-entry-badge">★ Free Spectator Admission ★</div>
+  </div>
+
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="switchTab('spectator-points', this)">Viewing</button>
+    <button class="tab-btn" onclick="switchTab('entry-list', this)">Entry List</button>
+  </div>
+
+  <!-- VIEWING POINTS TAB -->
+  <div id="spectator-points" class="tab-content active">
+    <div class="card">
+      <div class="card-title">
+        <span>SS2 / SS5 - Sweet Lamb</span>
+        <span class="badge badge-time">Car 0: 09:15</span>
+      </div>
+
+      <a class="btn" target="_blank" rel="noopener"
+         href="https://www.google.com/maps/dir/?api=1&destination=52.4172,-3.7215&travelmode=driving">
+         1. Navigate to Junction (Google Maps)
+      </a>
+
+      <div class="arrow-guide">
+        <p style="font-size: 0.75rem; color: var(--accent); font-weight: bold; margin-bottom: 6px; text-transform: uppercase;">
+          2. Follow Physical Rally Arrows From Turnoff:
+        </p>
+        
+        <div class="arrow-step">
+          <div class="arrow-icon">➔</div>
+          <div class="arrow-text">Turn <strong>RIGHT</strong> off highway onto forestry track (marked with orange rally arrows).</div>
+        </div>
+
+        <div class="arrow-step">
+          <div class="arrow-icon">▲</div>
+          <div class="arrow-text">Continue straight for 1.2 miles past forestry gate. Stay under 15mph.</div>
+        </div>
+
+        <div class="arrow-step">
+          <div class="arrow-icon">➔</div>
+          <div class="arrow-text">Bear <strong>RIGHT</strong> into spectator field. Parking is FREE courtesy of stage sponsor.</div>
+        </div>
+
+        <div class="arrow-step">
+          <div class="arrow-icon">🚶</div>
+          <div class="arrow-text"><strong>Foot Path:</strong> Follow green tape markers 400m up bank to viewing enclosure.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRY LIST TAB -->
+  <div id="entry-list" class="tab-content">
+    <div class="filter-bar">
+      <button id="btn-filter-all" class="filter-btn active" onclick="filterEntries('all')">All Escorts</button>
+      <button id="btn-filter-starred" class="filter-btn" onclick="filterEntries('starred')">My Favorites ⭐</button>
+    </div>
+
+    <div id="entry-container"></div>
+  </div>
+
+  <script>
+    // Historic Class H1 Escort Entry List
+    const entryData = [
+      { carNo: 1, driver: "G. Davies", codriver: "D. Jones", car: "Ford Escort RS1800 Mk2", class: "H1" },
+      { carNo: 2, driver: "R. Evans", codriver: "M. Harries", car: "Ford Escort Twin Cam Mk1", class: "H1" },
+      { carNo: 3, driver: "S. Williams", codriver: "T. Thomas", car: "Ford Escort RS2000 Mk2", class: "H1" },
+      { carNo: 4, driver: "M. Griffiths", codriver: "C. Lewis", car: "Ford Escort RS1600 Mk1", class: "H1" },
+      { carNo: 5, driver: "K. Bowen", codriver: "A. Hughes", car: "Ford Escort RS1800 Mk2", class: "H1" },
+      { carNo: 6, driver: "D. Price", codriver: "E. Richards", car: "Ford Escort Mexico Mk1", class: "H1" },
+      { carNo: 7, driver: "P. Morgan", codriver: "G. Rees", car: "Ford Escort RS2000 Mk2", class: "H1" }
+    ];
+
+    const STORAGE_KEY = 'rally_starred_cars';
+    let inMemoryStarred = [];
+    let currentFilter = 'all';
+
+    function getStarred() {
+      try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : inMemoryStarred;
+      } catch (e) {
+        return inMemoryStarred;
+      }
+    }
+
+    function toggleStar(carNo) {
+      let starred = getStarred();
+      if (starred.includes(carNo)) {
+        starred = starred.filter(id => id !== carNo);
+      } else {
+        starred.push(carNo);
+      }
+      
+      inMemoryStarred = starred;
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(starred));
+      } catch (e) {
+        console.warn('LocalStorage unavailable');
+      }
+
+      renderEntries();
+      updateStarCount();
+    }
+
+    function updateStarCount() {
+      const count = getStarred().length;
+      document.getElementById('star-count').textContent = `${count} Starred`;
+    }
+
+    function filterEntries(type) {
+      currentFilter = type;
+      document.getElementById('btn-filter-all').classList.toggle('active', type === 'all');
+      document.getElementById('btn-filter-starred').classList.toggle('active', type === 'starred');
+      renderEntries();
+    }
+
+    function renderEntries() {
+      const container = document.getElementById('entry-container');
+      const starred = getStarred();
+      container.innerHTML = '';
+
+      const filtered = entryData.filter(item => {
+        if (currentFilter === 'starred') return starred.includes(item.carNo);
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        const emptyMsg = document.createElement('p');
+        emptyMsg.style.cssText = 'text-align:center; padding:30px 10px; color:var(--text-muted); font-size:0.9rem;';
+        emptyMsg.textContent = currentFilter === 'starred' ? 'No favorites starred yet. Tap any entry card above to star it!' : 'No cars found.';
+        container.appendChild(emptyMsg);
+        return;
+      }
+
+      filtered.forEach(item => {
+        const isStarred = starred.includes(item.carNo);
+
+        const card = document.createElement('div');
+        card.className = 'entry-item';
+        card.onclick = () => toggleStar(item.carNo);
+
+        const carNum = document.createElement('div');
+        carNum.className = 'car-num';
+        carNum.textContent = `#${item.carNo}`;
+
+        const details = document.createElement('div');
+        details.className = 'crew-details';
+        details.innerHTML = `
+          <div class="crew-names">${item.driver} / ${item.codriver}</div>
+          <div class="car-model">${item.car} • <span style="color:var(--accent)">Class ${item.class}</span></div>
+        `;
+
+        const starIcon = document.createElement('div');
+        starIcon.className = `star-icon ${isStarred ? 'starred' : ''}`;
+        starIcon.textContent = isStarred ? '★' : '☆';
+
+        card.appendChild(carNum);
+        card.appendChild(details);
+        card.appendChild(starIcon);
+        container.appendChild(card);
+      });
+    }
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderEntries();
+      updateStarCount();
+    });
+  </script>
+</body>
+</html>
